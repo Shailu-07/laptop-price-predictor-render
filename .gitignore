@@ -1,3 +1,11 @@
-venv
+venv/
 .venv/
+.vscode/
+.campusx-local-setup
 __pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.env
+.env.*
+!.env.example
+*.tar
