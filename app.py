@@ -1,12 +1,17 @@
 import streamlit as st
 import pickle
 import numpy as np
+from pathlib import Path
 
 # import the model
-pipe = pickle.load(open('pipe.pkl','rb'))
-df = pickle.load(open('df.pkl','rb'))
+model_dir = Path(__file__).resolve().parent / 'local_model'
+with (model_dir / 'pipe.pkl').open('rb') as model_file:
+    pipe = pickle.load(model_file)
+with (model_dir / 'df.pkl').open('rb') as data_file:
+    df = pickle.load(data_file)
 
 st.title("Laptop Predictor")
+st.caption("Estimates use a historical dataset, not live shop prices.")
 
 # brand
 company = st.selectbox('Brand',df['Company'].unique())
@@ -18,7 +23,7 @@ type = st.selectbox('Type',df['TypeName'].unique())
 ram = st.selectbox('RAM(in GB)',[2,4,6,8,12,16,24,32,64])
 
 # weight
-weight = st.number_input('Weight of the Laptop')
+weight = st.number_input('Weight of the Laptop (kg)', min_value=0.1, max_value=10.0, value=2.0, step=0.1)
 
 # Touchscreen
 touchscreen = st.selectbox('Touchscreen',['No','Yes'])
@@ -27,7 +32,7 @@ touchscreen = st.selectbox('Touchscreen',['No','Yes'])
 ips = st.selectbox('IPS',['No','Yes'])
 
 # screen size
-screen_size = st.slider('Scrensize in inches', 10.0, 18.0, 13.0)
+screen_size = st.slider('Screen size (in inches)', 10.0, 18.0, 13.0)
 
 # resolution
 resolution = st.selectbox('Screen Resolution',['1920x1080','1366x768','1600x900','3840x2160','3200x1800','2880x1800','2560x1600','2560x1440','2304x1440'])
@@ -59,7 +64,7 @@ if st.button('Predict Price'):
     X_res = int(resolution.split('x')[0])
     Y_res = int(resolution.split('x')[1])
     ppi = ((X_res**2) + (Y_res**2))**0.5/screen_size
-    query = np.array([company,type,ram,weight,touchscreen,ips,ppi,cpu,hdd,ssd,gpu,os])
+    query = np.array([company,type,ram,weight,touchscreen,ips,ppi,cpu,hdd,ssd,gpu,os], dtype=object)
 
     query = query.reshape(1,12)
     st.title("The predicted price of this configuration is " + str(int(np.exp(pipe.predict(query)[0]))))
