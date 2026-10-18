@@ -1,0 +1,12 @@
+.git
+.venv
+.vscode
+.campusx-local-setup
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.ipynb
+laptop_data.csv
+/pipe.pkl
+/df.pkl
+train_local.py
