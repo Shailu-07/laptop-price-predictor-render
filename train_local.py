@@ -74,17 +74,8 @@ def main():
         with (output / name).open('wb') as handle:
             pickle.dump(value, handle)
     (output / 'metrics.json').write_text(json.dumps(metrics, indent=2))
-    source = (ROOT / 'app.py').read_text()
-    source = source.replace("open('pipe.pkl','rb')", "open('local_model/pipe.pkl','rb')")
-    source = source.replace("open('df.pkl','rb')", "open('local_model/df.pkl','rb')")
-    if "local_model/pipe.pkl" not in source or "local_model/df.pkl" not in source:
-        raise RuntimeError('The upstream app changed; its model paths need review.')
-    source = source.replace("st.number_input('Weight of the Laptop')", "st.number_input('Weight of the Laptop (kg)', min_value=0.1, max_value=10.0, value=2.0, step=0.1)")
-    source = source.replace('np.array([company,type,ram,weight,touchscreen,ips,ppi,cpu,hdd,ssd,gpu,os])', 'np.array([company,type,ram,weight,touchscreen,ips,ppi,cpu,hdd,ssd,gpu,os], dtype=object)')
-    source = source.replace('st.title("Laptop Predictor")', 'st.title("Laptop Predictor")\nst.caption("CampusX learning project. Estimates use the historical dataset, not live shop prices.")')
-    (ROOT / 'app_local.py').write_text(source)
     print(json.dumps(metrics, indent=2), flush=True)
-    print('Model ready. Original app.py and model files have been preserved.')
+    print('Model ready in local_model/.')
 
 if __name__ == '__main__':
     main()
